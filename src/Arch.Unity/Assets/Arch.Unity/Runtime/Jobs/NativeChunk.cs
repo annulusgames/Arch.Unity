@@ -10,29 +10,29 @@ namespace Arch.Unity.Jobs
     public unsafe struct NativeChunk : IDisposable
     {
         internal UnsafeHashMap<int, (IntPtr Ptr, int Length)> componentMap;
-        int size;
+        int count;
 
-        public int Size => size;
+        public int Count => count;
         public int ComponentCount => componentMap.Count;
 
         internal static NativeChunk Create(Chunk chunk, AllocatorManager.AllocatorHandle allocator, ref NativeList<GCHandle> gcHandles)
         {
             var nativeChunk = default(NativeChunk);
             nativeChunk.componentMap = new UnsafeHashMap<int, (IntPtr ptr, int length)>(chunk.Components.Length, allocator);
-            nativeChunk.size = chunk.Size;
+            nativeChunk.count = chunk.Count;
 
             foreach (var componentArray in chunk.Components)
             {
                 var elementType = componentArray.GetType().GetElementType();
                 if (!elementType.IsUnmanaged()) continue;
 
-                var componentType = Core.Utils.Component.GetComponentType(elementType);
+                ComponentRegistry.TryGet(elementType, out var componentType);
 
                 var gcHandle = GCHandlePool.Create(componentArray);
                 gcHandles.Add(gcHandle);
                 var ptr = gcHandle.AddrOfPinnedObject();
 
-                nativeChunk.componentMap.Add(componentType.Id, (ptr, chunk.Size));
+                nativeChunk.componentMap.Add(componentType.Id, (ptr, chunk.Count));
             }
 
             return nativeChunk;

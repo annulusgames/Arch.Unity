@@ -32,7 +32,7 @@ namespace Arch.Unity.Editor
             DrawHeader(proxy);
             DrawLine(Styles.LineColor);
 
-            foreach (var component in proxy.world.GetAllComponents(proxy.entityReference))
+            foreach (var component in proxy.world.GetAllComponents(proxy.entity))
             {
                 if (component is GameObjectReference or EntityConverter or EntityName) continue;
 
@@ -84,19 +84,19 @@ namespace Arch.Unity.Editor
                 using (new EditorGUI.DisabledScope(true))
                 using (new EditorGUILayout.VerticalScope())
                 {
-                    var entityReference = selectionProxy.entityReference;
-                    var hasGameObject = selectionProxy.world.TryGet(entityReference, out GameObjectReference gameObjectReference);
-                    var hasName = selectionProxy.world.TryGet(entityReference, out EntityName entityName);
+                    var entity = selectionProxy.entity;
+                    var hasGameObject = selectionProxy.world.TryGet(entity, out GameObjectReference gameObjectReference);
+                    var hasName = selectionProxy.world.TryGet(entity, out EntityName entityName);
 
                     using (new EditorGUILayout.HorizontalScope())
                     {
-                        EditorGUILayout.TextField(hasName ? entityName.ToString() : $"Entity({entityReference.Entity.Id}:{entityReference.Version})");
+                        EditorGUILayout.TextField(hasName ? entityName.ToString() : $"Entity({entity.Id}:{entity.Version})");
 
                         EditorGUI.indentLevel++;
                         EditorGUIUtility.labelWidth = 15f;
-                        EditorGUILayout.IntField("Id", entityReference.Entity.Id, GUILayout.Width(80f));
+                        EditorGUILayout.IntField("Id", entity.Id, GUILayout.Width(80f));
                         EditorGUIUtility.labelWidth = 45f;
-                        EditorGUILayout.IntField("Version", entityReference.Version, GUILayout.Width(90f));
+                        EditorGUILayout.IntField("Version", entity.Version, GUILayout.Width(90f));
                         EditorGUI.indentLevel--;
                         EditorGUIUtility.labelWidth = 20f;
                     }
