@@ -9,16 +9,16 @@ namespace Arch.Unity.Conversion
     public sealed class SyncWithEntity : MonoBehaviour
     {
         internal World World { get; set; }
-        internal EntityReference EntityReference { get; set; }
+        internal Entity Entity { get; set; }
         internal bool UseDisabledComponent { get; set; }
 
         void OnEnable()
         {
             if (!IsEntityAlive()) return;
 
-            if (UseDisabledComponent && World.Has<GameObjectDisabled>(EntityReference))
+            if (UseDisabledComponent && World.Has<GameObjectDisabled>(Entity))
             {
-                World.Remove<GameObjectDisabled>(EntityReference);
+                World.Remove<GameObjectDisabled>(Entity);
             }
         }
 
@@ -26,9 +26,9 @@ namespace Arch.Unity.Conversion
         {
             if (!IsEntityAlive()) return;
 
-            if (UseDisabledComponent && !World.Has<GameObjectDisabled>(EntityReference))
+            if (UseDisabledComponent && !World.Has<GameObjectDisabled>(Entity))
             {
-                World.Add<GameObjectDisabled>(EntityReference);
+                World.Add<GameObjectDisabled>(Entity);
             }
         }
 
@@ -36,21 +36,21 @@ namespace Arch.Unity.Conversion
         {
             if (IsEntityAlive())
             {
-                World.Destroy(EntityReference);
+                World.Destroy(Entity);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EntityReference GetEntityReference()
+        public Entity GetEntityReference()
         {
-            return EntityReference;
+            return Entity;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEntityAlive()
         {
             if (World == null) return false;
-            return World.IsAlive(EntityReference);
+            return World.IsAlive(Entity);
         }
     }
 }

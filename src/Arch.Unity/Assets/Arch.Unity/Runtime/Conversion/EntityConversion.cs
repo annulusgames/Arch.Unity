@@ -52,24 +52,24 @@ namespace Arch.Unity.Conversion
         }
 #endif
 
-        public static event Action<EntityReference, World> OnConvert;
+        public static event Action<Entity, World> OnConvert;
 
-        public static EntityReference Convert(GameObject gameObject)
+        public static Entity Convert(GameObject gameObject)
         {
             return Convert(gameObject, DefaultWorld, EntityConversionOptions.Default);
         }
 
-        public static EntityReference Convert(GameObject gameObject, EntityConversionOptions options)
+        public static Entity Convert(GameObject gameObject, EntityConversionOptions options)
         {
             return Convert(gameObject, DefaultWorld, options);
         }
 
-        public static EntityReference Convert(GameObject gameObject, World world)
+        public static Entity Convert(GameObject gameObject, World world)
         {
             return Convert(gameObject, world, EntityConversionOptions.Default);
         }
 
-        public static EntityReference Convert(GameObject gameObject, World world, EntityConversionOptions options)
+        public static Entity Convert(GameObject gameObject, World world, EntityConversionOptions options)
         {
             var components = gameObject.GetComponents<UnityComponent>();
             var converter = new Converter();
@@ -107,7 +107,7 @@ namespace Arch.Unity.Conversion
             }
 
             world ??= DefaultWorld;
-            var entityReference = world.Reference(converter.Convert(world));
+            var Entity = converter.Convert(world);
 
             if (options.ConversionMode == ConversionMode.ConvertAndDestroy)
             {
@@ -117,20 +117,20 @@ namespace Arch.Unity.Conversion
             {
                 var syncWithEntity = gameObject.AddComponent<SyncWithEntity>();
                 syncWithEntity.World = world;
-                syncWithEntity.EntityReference = entityReference;
+                syncWithEntity.Entity = Entity;
                 syncWithEntity.UseDisabledComponent = options.UseDisabledComponent;
             }
 
-            OnConvert?.Invoke(entityReference, world);
+            OnConvert?.Invoke(Entity, world);
 
-            return entityReference;
+            return Entity;
         }
 
-        public static bool TryGetEntity(GameObject gameObject, out EntityReference entity)
+        public static bool TryGetEntity(GameObject gameObject, out Entity entity)
         {
             if (gameObject.TryGetComponent<SyncWithEntity>(out var syncWithEntity))
             {
-                entity = syncWithEntity.EntityReference;
+                entity = syncWithEntity.Entity;
                 return true;
             }
 

@@ -35,7 +35,7 @@ namespace Arch.Unity.Editor
             }
 
             public ItemType itemType;
-            public EntityReference entityReference;
+            public Entity entity;
             
         }
 
@@ -85,7 +85,7 @@ namespace Arch.Unity.Editor
 
             foreach (var chunk in TargetWorld.Query(new QueryDescription()))
             {
-                for (int i = 0; i < chunk.Size; i++)
+                for (int i = 0; i < chunk.Count; i++)
                 {
                     hierarchyRoot.AddChild(CreateItem(chunk.Entities[i]));
                 }
@@ -96,7 +96,7 @@ namespace Arch.Unity.Editor
         protected override void RowGUI(RowGUIArgs args)
         {
             var item = (Item)args.item;
-            var disabled = TargetWorld.IsAlive(item.entityReference) && TargetWorld.Has<GameObjectDisabled>(item.entityReference);
+            var disabled = TargetWorld.IsAlive(item.entity) && TargetWorld.Has<GameObjectDisabled>(item.entity);
 
             using (new EditorGUI.DisabledScope(disabled))
             {
@@ -127,21 +127,20 @@ namespace Arch.Unity.Editor
             if (currentSelection == null) currentSelection = ScriptableObject.CreateInstance<EntitySelectionProxy>();
 
             currentSelection.world = TargetWorld;
-            currentSelection.entityReference = item.entityReference;
+            currentSelection.entity = item.entity;
 
             Selection.activeObject = currentSelection;
         }
 
         TreeViewItem CreateItem(Entity entity)
-        {
-            var reference = TargetWorld.Reference(entity);
+        { ;
             var hasName = TargetWorld.TryGet(entity, out EntityName entityName);
             var item = Item.GetOrCreate();
             item.id = entity.Id;
             item.depth = 1;
-            item.displayName = hasName ? entityName.ToString() : $"Entity({entity.Id}:{reference.Version})";
+            item.displayName = hasName ? entityName.ToString() : $"Entity({entity.Id}:{entity.Version})";
             item.itemType = ItemType.Entity;
-            item.entityReference = reference;
+            item.entity = entity;
             return item;
         }
 

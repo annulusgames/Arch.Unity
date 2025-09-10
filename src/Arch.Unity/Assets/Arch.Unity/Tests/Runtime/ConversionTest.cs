@@ -13,7 +13,7 @@ namespace Arch.Unity.Tests.Runtime
             var obj = new GameObject("Target");
             var converted = false;
 
-            void OnConvert(EntityReference entity, World world)
+            void OnConvert(Entity entity, World world)
             {
                 converted = true;
             }

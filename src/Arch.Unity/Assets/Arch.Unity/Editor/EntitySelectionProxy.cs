@@ -6,6 +6,6 @@ namespace Arch.Unity.Editor
     public sealed class EntitySelectionProxy : ScriptableObject
     {
         public World world;
-        public EntityReference entityReference;
+        public Entity entity;
     }
 }
